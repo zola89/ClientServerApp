@@ -56,7 +56,6 @@ public class CapitalizeClient {
                 String[] s = ClientUtil.generateWords(200);
 				for (int i = 0; i < s.length; i++) {
 					out.println(s[i]);
-				}
 
 					String response;
 					try {
@@ -69,6 +68,7 @@ public class CapitalizeClient {
 					}
 					// dataField.selectAll();
 					messageArea.append(response + "\n");
+				}
             }
         });
     }

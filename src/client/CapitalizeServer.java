@@ -73,9 +73,7 @@ public class CapitalizeServer {
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
                 // Send a welcome message to the client.
-                out.println("Hello, you are client #" + clientNumber + ".");
-                out.println("Enter a line with only a period to quit\n");
-
+                //out.println("Hello, you are client #" + clientNumber + ".");
                 // Get messages from the client, line by line; return them
                 // capitalized
                 while (true) {
@@ -84,6 +82,12 @@ public class CapitalizeServer {
                         break;
                     }
                     out.println(input.toUpperCase());
+                    try {
+						Thread.sleep(input.length()*100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
                 }
             } catch (IOException e) {
                 log("Error handling client# " + clientNumber + ": " + e);

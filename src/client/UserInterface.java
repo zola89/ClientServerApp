@@ -4,6 +4,12 @@ package client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 import javax.swing.*;
  
 public class UserInterface {
@@ -12,14 +18,17 @@ public class UserInterface {
    private JLabel headerLabel;
    private JLabel statusLabel;
    private JPanel controlPanel;
-
+   private BufferedReader in;
+   private PrintWriter out;
+   
    public UserInterface(){
       prepareGUI();
    }
 
-   public static void main(String[] args){
+   public static void main(String[] args) throws Exception{
       UserInterface  swingControl = new UserInterface();      
       swingControl.showProgressBar();
+	  swingControl.connectToServer();
    }
 
    private void prepareGUI(){
@@ -50,7 +59,18 @@ public class UserInterface {
    private JButton startButton;
    private JTextArea outputTextArea;
    
-   
+    public void connectToServer() throws IOException {
+        // Make connection and initialize streams
+        Socket socket = new Socket("localhost", 9898);
+        in = new BufferedReader(
+                new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
+
+        // Consume the initial welcoming messages from the server
+        //for (int i = 0; i < 3; i++) {
+          //  outputTextArea.append(in.readLine() + "\n");
+        //}
+    }
    
    private void showProgressBar(){
       headerLabel.setText("Client Server App"); 
@@ -66,6 +86,7 @@ public class UserInterface {
          startButton.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
+	            
             task = new Task();                
             task.start();
          }});
@@ -80,19 +101,36 @@ public class UserInterface {
 	    }
 	
 	    public void run(){
-	       for(int i =0; i<= 100; i+=10){
-	          final int progress = i;
-	          SwingUtilities.invokeLater(new Runnable() {
-	             public void run() {
-	                progressBar.setValue(progress);
-	                outputTextArea.setText(outputTextArea.getText() 
-	                + String.format("Completed %d%% of task.\n", progress));
-	             }
-	          });
-	          try {
-	             Thread.sleep(100);
-	          } catch (InterruptedException e) {}
-	       }
+			String[] s = ClientUtil.generateWords(200);
+			for (int i = 0; i < s.length; i++) {
+				out.println(s[i]);
+			}
+
+			String response;
+			
+			for (int i = 0; i < s.length; i++) {
+				try {
+					response = in.readLine();
+					if (response == null || response.equals("")) {
+						System.exit(0);
+					}
+				} catch (IOException ex) {
+					response = "Error: " + ex;
+				}
+				final int progress = i/2+1;
+				SwingUtilities.invokeLater(new Runnable() {
+		             public void run() {
+		                progressBar.setValue(progress);
+		             }
+		          });
+				// dataField.selectAll();
+				outputTextArea.append(response + "\n");
+			}
+
+				
+		
+	          
+	          
 	    }
 	 }
       
