@@ -53,10 +53,9 @@ public class CapitalizeClient {
              * streams and windows.
              */
             public void actionPerformed(ActionEvent e) {
-                String[] s = ClientUtil.generateWords(200);
+                String[] s = ClientUtil.generateRandomWords(200);
 				for (int i = 0; i < s.length; i++) {
 					out.println(s[i]);
-				}
 
 					String response;
 					try {
@@ -69,6 +68,7 @@ public class CapitalizeClient {
 					}
 					// dataField.selectAll();
 					messageArea.append(response + "\n");
+				}
             }
         });
     }
