@@ -38,10 +38,5 @@ public class ClientUtil {
 	    return randomStrings;
 	}
 	
-	public static void main(String[] args){
-		String[] s = generateRandomWords(200);
-		for (int i = 0; i < s.length; i++) {
-			System.out.println(s[i]);
-		}
-	}
+
 }
