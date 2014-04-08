@@ -40,8 +40,8 @@ public class ClientUI {
             System.exit(0);
          }        
       });    
-      headerLabel = new JLabel("asa", JLabel.CENTER);        
-      statusLabel = new JLabel("dsada",JLabel.CENTER);    
+      headerLabel = new JLabel("", JLabel.CENTER);        
+      statusLabel = new JLabel("",JLabel.CENTER);    
 
       statusLabel.setSize(100,100);
 
