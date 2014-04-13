@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.*;
+
+import util.ClientServerUtil;
  
 public class ClientUI {
     
@@ -95,7 +97,7 @@ public class ClientUI {
 	    }
 	
 	    public void run(){
-			String[] s = ClientUtil.generateWords(200);
+			String[] s = ClientServerUtil.generateWords(200);
 			for (int i = 0; i < s.length; i++) {
 				out.println(s[i]);
 			}

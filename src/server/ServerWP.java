@@ -80,6 +80,7 @@ public class ServerWP {
 						true);
 				while (true) {
 					String output = wp.getResult();
+					
 					out.println(output);
 				}
 			} catch (Exception e) { // zasad

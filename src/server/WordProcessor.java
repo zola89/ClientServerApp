@@ -1,22 +1,56 @@
 package server;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Collections;
 
-public class WordProcessor extends Thread {
+import util.ClientServerUtil;
+import util.DatabaseManager;
+public class WordProcessor {
 
 	private BlockingQueue<Future<String>> queue = new LinkedBlockingQueue<>();
-
+	private Map<Long , String> map = new TreeMap<Long, String>();
+	
 	private ExecutorService poolOdd = Executors.newFixedThreadPool(2);
 	private ExecutorService poolEven = Executors.newFixedThreadPool(2);
-
+	private static DatabaseManager dbManager = new DatabaseManager();
 	public void process(String input) {
 		WordProcessingTask task = new WordProcessingTask(input);
-
+		long processTime = input.length()*100;
+		
+		Comparator<Entry<Long, String>> cmp = new Comparator<Entry<Long, String>>() {
+		    public int compare(Entry<Long, String> entry1, Entry<Long, String> entry2) {
+		        return Integer.compare(entry1.getValue().length(), entry2.getValue().length());
+		    }
+		};
+		
+		map.put(task.getCurrentId(), input);
+		//Collections.min(arg0, arg1)
+		
+		if(task.getCurrentId() % 200 == 0){
+			//TODO: sacuvaj  u bazu
+			Entry<Long, String> max = Collections.max(map.entrySet(), cmp);
+			Entry<Long, String> min = Collections.min(map.entrySet(), cmp);
+			int batchNo = (int)task.getCurrentId()/200;
+			dbManager.insertBatch(batchNo, max.getValue().length(), min.getValue().length(), ClientServerUtil.getAvarages(map));
+			for (Entry<Long, String> entry : map.entrySet()) {
+				dbManager.insertWord(entry.getValue(), entry.getValue().length(), parity(entry.getValue()), batchNo);
+				
+			}
+			map.clear();
+			
+		}
 		System.out.println(input + "ide u queue");
 		if (parity(input)) {
 			queue.add(poolEven.submit(task));
