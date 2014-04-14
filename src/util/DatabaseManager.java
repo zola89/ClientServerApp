@@ -132,8 +132,8 @@ public class DatabaseManager {
 		try {
 			Statement stmt = conn.createStatement();
 		
-			//stmt.execute("DROP TABLE words");
-			//stmt.execute("DROP TABLE batches");
+			stmt.execute("DROP TABLE words");
+			stmt.execute("DROP TABLE batches");
 			
 			stmt.execute("CREATE TABLE batches ( " + "id INT NOT NULL, "
 					+ "maxTime BIGINT, " + "minTime BIGINT, " + "avgTime BIGINT, "

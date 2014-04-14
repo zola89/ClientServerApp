@@ -50,6 +50,22 @@ public class ClientServerUtil {
 		return sum;
 
 	}
+	
+	public static long getSumClient(long [] array){
+		long sum = 0;
+		for (int i = 0; i < array.length; i++) {
+			sum += array[i];
+		}
+		return sum;
+	}
+	
+	public static long getAvgClient(long [] array){
+		long sum = 0;
+		for (int i = 0; i < array.length; i++) {
+			sum += array[i];
+		}
+		return sum/array.length;
+	}
 
 	public static void main(String[] args) {
 		String[] s = generateRandomWords(200);
