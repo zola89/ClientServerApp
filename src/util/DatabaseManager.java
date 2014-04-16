@@ -17,12 +17,12 @@ public class DatabaseManager {
 	
 	public static void main (String[] args){
 		DatabaseManager dm = new DatabaseManager();
-		dm.insertBatch(1, 1000, 40, 19);
-		dm.insertBatch(2, 10120, 40, 12);
-		dm.insertBatch(3, 10021, 40, 11);
-		dm.insertWord("zoki", 1502, true, 2);
-		dm.insertWord("laza", 1503, false, 1);
-		dm.insertWord("boli", 1501, true, 2);
+//		dm.insertBatch(1, 1000, 40, 19);
+//		dm.insertBatch(2, 10120, 40, 12);
+//		dm.insertBatch(3, 10021, 40, 11);
+//		dm.insertWord("zoki", 1502, true, 2);
+//		dm.insertWord("laza", 1503, false, 1);
+//		dm.insertWord("boli", 1501, true, 2);
 		
 		dm.viewBatches();
 		dm.viewWords();
@@ -52,7 +52,7 @@ public class DatabaseManager {
 
 	public DatabaseManager() {
 		createConnection();
-		createTables();
+		//createTables();
 	}
 
 	private void createConnection() {

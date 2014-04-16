@@ -16,9 +16,11 @@ public class ConnectionManager {
 
 	private String[] words = null;
 	private long[] times;
-
+	private long firstTime = 0, lastTime = 0;
 	private int sendingIndex = 0;
 	private int receivingIndex = 0;
+
+	private Socket socket;
 
 	public ConnectionManager(ClientUI ui) {
 		this.ui = ui;
@@ -37,9 +39,14 @@ public class ConnectionManager {
 	}
 
 	public void connectToServer() throws IOException {
-		Socket socket = new Socket("localhost", 9898);
+		socket = new Socket("localhost", 9898);
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream(), true);
+	}
+
+	public void disconnectFromServer() throws IOException {
+		out.flush();
+		// socket.close();
 	}
 
 	private class InputThread extends Thread {
@@ -48,15 +55,33 @@ public class ConnectionManager {
 			try {
 				while (receivingIndex < words.length) {
 					String input = in.readLine();
-					times[receivingIndex] = System.currentTimeMillis() - times[receivingIndex];
-					ui.update(input + " " + times[receivingIndex], receivingIndex);
+					long currTime = System.currentTimeMillis();
+					times[receivingIndex] = currTime - times[receivingIndex];
+					ui.update(input + " " + times[receivingIndex],
+							receivingIndex);
+					if (receivingIndex == times.length-1){
+						lastTime = currTime-firstTime;
+						//first 
+						//last
+						//sum
+						//avg
+						StringBuilder sb = new StringBuilder();
+						sb.append("min exec time: " + times[0] + " " + words[0]+"\n");
+						sb.append("max exec time: " + times[times.length-1] + " " + words[times.length-1]+"\n");
+						sb.append("sum exec time: " + lastTime +"\n");
+						sb.append("sum avg time: " + ClientServerUtil.getAvgClient(times) +"\n");
+						ui.update(sb.toString());
+						
+						
+						
+					}
 
 					receivingIndex++;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				
+
 				ui.finished();
 			}
 		}
@@ -69,7 +94,8 @@ public class ConnectionManager {
 				while (sendingIndex < words.length) {
 					out.println(words[sendingIndex]);
 					times[sendingIndex] = System.currentTimeMillis();
-
+					if (sendingIndex == 0)
+						firstTime = times[sendingIndex];
 					sendingIndex++;
 				}
 			} catch (Exception e) { // zasad

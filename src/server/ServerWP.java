@@ -58,8 +58,8 @@ public class ServerWP {
 					wp.process(input);
 				}
 			} catch (IOException e) {
-				log("BUM1");
-				e.printStackTrace();
+				//log("BUM1");
+				//e.printStackTrace();
 			}
 		}
 	}

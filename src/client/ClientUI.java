@@ -46,6 +46,10 @@ public class ClientUI {
 		cm = new ConnectionManager(this);
 		cm.connectToServer();
 	}
+	
+	private void disconnectFromServer() throws IOException{
+		cm.disconnectFromServer();
+	}
 
 	private void prepareGUI() {
 		mainFrame = new JFrame("Client Server App");
@@ -53,6 +57,12 @@ public class ClientUI {
 		mainFrame.setLayout(new GridLayout(3, 1));
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent) {
+				try {
+					disconnectFromServer();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				System.exit(0);
 			}
 		});
@@ -77,6 +87,10 @@ public class ClientUI {
 				progressBar.setValue(currentProgress);				
 			}
 		});
+		outputTextArea.append(response + "\n");
+	}
+	
+	public void update(String response) {
 		outputTextArea.append(response + "\n");
 	}
 	
@@ -115,5 +129,6 @@ public class ClientUI {
 		controlPanel.add(scrollPane);
 		mainFrame.setVisible(true);
 	}
+
 
 }

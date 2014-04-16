@@ -1,9 +1,6 @@
 package server;
 
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -36,14 +33,12 @@ public class WordProcessor {
 		};
 		
 		map.put(task.getCurrentId(), input);
-		//Collections.min(arg0, arg1)
 		
 		if(task.getCurrentId() % 200 == 0){
-			//TODO: sacuvaj  u bazu
 			Entry<Long, String> max = Collections.max(map.entrySet(), cmp);
 			Entry<Long, String> min = Collections.min(map.entrySet(), cmp);
 			int batchNo = (int)task.getCurrentId()/200;
-			dbManager.insertBatch(batchNo, max.getValue().length(), min.getValue().length(), ClientServerUtil.getAvarages(map));
+			dbManager.insertBatch(batchNo, max.getValue().length()*100, min.getValue().length()*100, ClientServerUtil.getAvarages(map));
 			for (Entry<Long, String> entry : map.entrySet()) {
 				dbManager.insertWord(entry.getValue(), entry.getValue().length(), parity(entry.getValue()), batchNo);
 				
