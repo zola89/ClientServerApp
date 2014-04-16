@@ -1,4 +1,4 @@
-package util;
+package client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,9 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import client.ClientUI;
+import util.ClientServerUtil;
 
-public class ConnectionManager {
+public class Client {
 	private BufferedReader in;
 	private PrintWriter out;
 
@@ -22,12 +22,12 @@ public class ConnectionManager {
 
 	private Socket socket;
 
-	public ConnectionManager(ClientUI ui) {
+	public Client(ClientUI ui) {
 		this.ui = ui;
 	}
 
 	public void sendWords() throws InterruptedException {
-		words = ClientServerUtil.generateWords(200);
+		words = ClientServerUtil.generateRandomWords(ClientServerUtil.BATCH_SIZE);
 		times = new long[words.length];
 		sendingIndex = 0;
 		receivingIndex = 0;
@@ -45,8 +45,7 @@ public class ConnectionManager {
 	}
 
 	public void disconnectFromServer() throws IOException {
-		out.flush();
-		// socket.close();
+		socket.close();
 	}
 
 	private class InputThread extends Thread {
@@ -59,23 +58,10 @@ public class ConnectionManager {
 					times[receivingIndex] = currTime - times[receivingIndex];
 					ui.update(input + " " + times[receivingIndex],
 							receivingIndex);
-					if (receivingIndex == times.length-1){
-						lastTime = currTime-firstTime;
-						//first 
-						//last
-						//sum
-						//avg
-						StringBuilder sb = new StringBuilder();
-						sb.append("min exec time: " + times[0] + " " + words[0]+"\n");
-						sb.append("max exec time: " + times[times.length-1] + " " + words[times.length-1]+"\n");
-						sb.append("sum exec time: " + lastTime +"\n");
-						sb.append("sum avg time: " + ClientServerUtil.getAvgClient(times) +"\n");
-						ui.update(sb.toString());
-						
-						
-						
+					if (receivingIndex == times.length - 1) {
+						lastTime = currTime - firstTime;
+						ui.update(calcStats());
 					}
-
 					receivingIndex++;
 				}
 			} catch (IOException e) {
@@ -84,6 +70,23 @@ public class ConnectionManager {
 
 				ui.finished();
 			}
+		}
+
+		private String calcStats() {
+			StringBuilder sb = new StringBuilder();
+
+			// minimum execution time
+			sb.append("min exec time: " + times[0] + " WORD: " + words[0]
+					+ "\n");
+			// maximum execution time
+			sb.append("max exec time: " + times[times.length - 1] + " WORD: "
+					+ words[times.length - 1] + "\n");
+			// sum time (first sent, last received)
+			sb.append("sum exec time: " + lastTime + "\n");
+			// avg time:
+			sb.append("avg exec time: " + ClientServerUtil.getAvgClient(times)
+					+ "\n");
+			return sb.toString();
 		}
 	}
 

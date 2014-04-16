@@ -17,8 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import util.ConnectionManager;
-
 public class ClientUI {
 
 	private JFrame mainFrame;
@@ -30,7 +28,7 @@ public class ClientUI {
 	private JButton startButton;
 	private JTextArea outputTextArea;
 
-	private ConnectionManager cm;
+	private Client cm;
 
 	public ClientUI() {
 		prepareGUI();
@@ -43,11 +41,11 @@ public class ClientUI {
 	}
 
 	private void connectToServer() throws IOException {
-		cm = new ConnectionManager(this);
+		cm = new Client(this);
 		cm.connectToServer();
 	}
-	
-	private void disconnectFromServer() throws IOException{
+
+	private void disconnectFromServer() throws IOException {
 		cm.disconnectFromServer();
 	}
 
@@ -60,7 +58,6 @@ public class ClientUI {
 				try {
 					disconnectFromServer();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				System.exit(0);
@@ -84,16 +81,16 @@ public class ClientUI {
 		final int currentProgress = responseIndex / 2 + 1;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				progressBar.setValue(currentProgress);				
+				progressBar.setValue(currentProgress);
 			}
 		});
 		outputTextArea.append(response + "\n");
 	}
-	
+
 	public void update(String response) {
 		outputTextArea.append(response + "\n");
 	}
-	
+
 	public void finished() {
 		startButton.setEnabled(true);
 	}
@@ -113,8 +110,8 @@ public class ClientUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				outputTextArea.setText("");
-				progressBar.setValue(0);	
-				
+				progressBar.setValue(0);
+
 				startButton.setEnabled(false);
 				try {
 					cm.sendWords();
@@ -129,6 +126,5 @@ public class ClientUI {
 		controlPanel.add(scrollPane);
 		mainFrame.setVisible(true);
 	}
-
 
 }

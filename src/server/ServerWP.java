@@ -36,8 +36,6 @@ public class ServerWP {
 			log("Connection with client is " + " closed");
 		}
 	}
-	
-	
 
 	private class InputThread extends Thread {
 		private Socket socket;
@@ -55,11 +53,15 @@ public class ServerWP {
 						socket.getInputStream()));
 				while (true) {
 					String input = in.readLine();
+					if (input == null) {
+						socket.close();
+						break; // Break out of the reading loop.
+					}
 					wp.process(input);
 				}
 			} catch (IOException e) {
-				//log("BUM1");
-				//e.printStackTrace();
+				//log("Client has terminated the connection");
+				 e.printStackTrace();
 			}
 		}
 	}
@@ -80,7 +82,7 @@ public class ServerWP {
 						true);
 				while (true) {
 					String output = wp.getResult();
-					
+
 					out.println(output);
 				}
 			} catch (Exception e) { // zasad

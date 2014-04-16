@@ -4,7 +4,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
 
+
+
 public class ClientServerUtil {
+	public static final int BATCH_SIZE = 200;
+
 	public static String[] generateRandomWords(int numberOfWords) {
 		String[] randomStrings = new String[numberOfWords];
 		Random random = new Random();
