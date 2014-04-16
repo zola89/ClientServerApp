@@ -16,16 +16,27 @@ import database.DatabaseManager;
 
 import util.ClientServerUtil;
 
+/**
+ * 
+ * for word processing and stats calculation
+ * 
+ */
 public class WordProcessor {
 
+	// blocking queue that keeps submited tasks in order
 	private BlockingQueue<Future<WordProcessingTask>> queue = new LinkedBlockingQueue<>();
+
+	// <task_id, word> map for stats calculations
 	private Map<Long, String> map = new TreeMap<Long, String>();
 
+	// two thread pools, each with fixed cappacity of 2 threads
 	private ExecutorService poolOdd = Executors.newFixedThreadPool(2);
 	private ExecutorService poolEven = Executors.newFixedThreadPool(2);
 
+	// database manager instance
 	private static DatabaseManager dbManager = new DatabaseManager();
 
+	// for comparison of word processing times
 	Comparator<Entry<Long, String>> cmp = new Comparator<Entry<Long, String>>() {
 		public int compare(Entry<Long, String> entry1,
 				Entry<Long, String> entry2) {
@@ -34,9 +45,14 @@ public class WordProcessor {
 		}
 	};
 
+	/**
+	 * task creation and submision to different pools regarding its parity
+	 * 
+	 * @param input
+	 *            word
+	 */
 	public void process(String input) {
 		WordProcessingTask task = new WordProcessingTask(input);
-
 		if (parity(input)) {
 			queue.add(poolEven.submit(task));
 		} else {
@@ -45,6 +61,14 @@ public class WordProcessor {
 
 	}
 
+	/**
+	 * 
+	 * taking tasks from blocking queue and calculating stats
+	 * 
+	 * @return processed word
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	public String getResult() throws InterruptedException, ExecutionException {
 		WordProcessingTask task = queue.take().get();
 
@@ -63,7 +87,7 @@ public class WordProcessor {
 					.getAvarages(map));
 			for (Entry<Long, String> entry : map.entrySet()) {
 				dbManager.insertWord(entry.getValue(), entry.getValue()
-						.length(), parity(entry.getValue()), batchNo);
+						.length() * 100, parity(entry.getValue()), batchNo);
 			}
 			map.clear();
 
@@ -76,9 +100,11 @@ public class WordProcessor {
 	public boolean parity(String str) {
 		return str.length() % 2 == 0;
 	}
-
+	
+	/**
+	 * shutdown pools
+	 */
 	public void shutdown() {
-		System.out.println("shutdown poolova");
 		poolOdd.shutdown();
 		poolEven.shutdown();
 	}

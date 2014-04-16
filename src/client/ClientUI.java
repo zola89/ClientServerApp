@@ -16,7 +16,11 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-
+/**
+ * 
+ * client user interface
+ *
+ */
 public class ClientUI {
 
 	private JFrame mainFrame;
@@ -28,7 +32,7 @@ public class ClientUI {
 	private JButton startButton;
 	private JTextArea outputTextArea;
 
-	private Client cm;
+	private Client client;
 
 	public ClientUI() {
 		prepareGUI();
@@ -41,12 +45,12 @@ public class ClientUI {
 	}
 
 	private void connectToServer() throws IOException {
-		cm = new Client(this);
-		cm.connectToServer();
+		client = new Client(this);
+		client.connectToServer();
 	}
 
 	private void disconnectFromServer() throws IOException {
-		cm.disconnectFromServer();
+		client.disconnectFromServer();
 	}
 
 	private void prepareGUI() {
@@ -76,7 +80,11 @@ public class ClientUI {
 		mainFrame.add(statusLabel);
 		mainFrame.setVisible(true);
 	}
-
+	/**
+	 * progress bar update & processed word appended
+	 * @param response processed word
+	 * @param responseIndex	word count
+	 */
 	public void update(String response, int responseIndex) {
 		final int currentProgress = responseIndex / 2 + 1;
 		SwingUtilities.invokeLater(new Runnable() {
@@ -90,7 +98,9 @@ public class ClientUI {
 	public void update(String response) {
 		outputTextArea.append(response + "\n");
 	}
-
+	/**
+	 * disable button while words batch is beeing processed 
+	 */
 	public void finished() {
 		startButton.setEnabled(true);
 	}
@@ -114,7 +124,7 @@ public class ClientUI {
 
 				startButton.setEnabled(false);
 				try {
-					cm.sendWords();
+					client.sendWords();
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}

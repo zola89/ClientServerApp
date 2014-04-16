@@ -8,15 +8,24 @@ import java.net.Socket;
 
 import util.ClientServerUtil;
 
+/**
+ * client connection manager, send/receive words, client side stats calculation
+ * 
+ */
 public class Client {
 	private BufferedReader in;
 	private PrintWriter out;
 
+	// ui reference needed for progress bar update
 	private ClientUI ui;
 
+	// words batch
 	private String[] words = null;
+	// words processing times client side
 	private long[] times;
+	// first sent, last recived word time stamp
 	private long firstTime = 0, lastTime = 0;
+
 	private int sendingIndex = 0;
 	private int receivingIndex = 0;
 
@@ -26,8 +35,14 @@ public class Client {
 		this.ui = ui;
 	}
 
+	/**
+	 * intiates whole process / starts input and output threads
+	 * 
+	 * @throws InterruptedException
+	 */
 	public void sendWords() throws InterruptedException {
-		words = ClientServerUtil.generateRandomWords(ClientServerUtil.BATCH_SIZE);
+		words = ClientServerUtil
+				.generateRandomWords(ClientServerUtil.BATCH_SIZE);
 		times = new long[words.length];
 		sendingIndex = 0;
 		receivingIndex = 0;
@@ -48,6 +63,10 @@ public class Client {
 		socket.close();
 	}
 
+	/**
+	 * receive processed words from server
+	 * 
+	 */
 	private class InputThread extends Thread {
 		@Override
 		public void run() {
@@ -72,6 +91,7 @@ public class Client {
 			}
 		}
 
+		// Stats calculations
 		private String calcStats() {
 			StringBuilder sb = new StringBuilder();
 
@@ -90,6 +110,9 @@ public class Client {
 		}
 	}
 
+	/**
+	 * sending batch of randomly generated words
+	 */
 	private class OutputThread extends Thread {
 		@Override
 		public void run() {

@@ -37,6 +37,9 @@ public class ServerWP {
 		}
 	}
 
+	/**
+	 * accept words for cllient, delegates them to the WordProcessor
+	 */
 	private class InputThread extends Thread {
 		private Socket socket;
 		private WordProcessor wp;
@@ -60,12 +63,14 @@ public class ServerWP {
 					wp.process(input);
 				}
 			} catch (IOException e) {
-				//log("Client has terminated the connection");
-				 e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}
 
+	/**
+	 * sends processed words back to the client
+	 */
 	private class OutputThread extends Thread {
 		private Socket socket;
 		private WordProcessor wp;

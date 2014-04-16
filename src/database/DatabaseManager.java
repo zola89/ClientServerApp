@@ -7,6 +7,12 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Database manager <b>!!!!!</b> For the first time execution comment <b>DROP
+ * TABLE</b> lines in <b>createTables()</b> method <b>!!!!!</b> For tables view/
+ * executing main method, please comment call of <b>createTables()</b> method in
+ * the constructor
+ */
 public class DatabaseManager {
 
 	private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -46,7 +52,10 @@ public class DatabaseManager {
 
 	public DatabaseManager() {
 		createConnection();
-		//createTables();
+		// !!!!!!!!!!!!
+		// please comment line below for tables view
+		createTables();
+		// !!!!!!!!!!!!
 	}
 
 	private void createConnection() {
@@ -107,8 +116,8 @@ public class DatabaseManager {
 				long procTime = results.getLong(2);
 				boolean parity = results.getBoolean(3);
 				int batch_id = results.getInt(4);
-				System.out.println(String.format("%-20s", word) + "\t" + procTime + "\t\t" + parity
-						+ "\t\t" + batch_id);
+				System.out.println(String.format("%-20s", word) + "\t"
+						+ procTime + "\t\t" + parity + "\t\t" + batch_id);
 			}
 			results.close();
 			stmt.close();
@@ -120,10 +129,16 @@ public class DatabaseManager {
 	private void createTables() {
 		try {
 			Statement stmt = conn.createStatement();
-
+			
+			// !!!!!
+			// please comment these 2 lines below for the first time execution,
+			// and then uncomment them for the future use
 			stmt.execute("DROP TABLE words");
 			stmt.execute("DROP TABLE batches");
-
+			// please comment these 2 lines above for the first time execution,
+			// and then uncomment them for the future use
+			// !!!!!
+			
 			stmt.execute("CREATE TABLE batches ( " + "id INT NOT NULL, "
 					+ "maxTime BIGINT, " + "minTime BIGINT, "
 					+ "avgTime BIGINT, " + "PRIMARY KEY (id) )");
